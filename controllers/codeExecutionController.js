@@ -19,7 +19,7 @@ const codeExecution = async (req, res) => {
     let code;
 
     let fileName,
-      compiledFile,
+      compileCommand,
       runCommand,
       cleanUpFiles = [];
     switch (language.toLowerCase()) {
@@ -32,7 +32,7 @@ const codeExecution = async (req, res) => {
           path.join(tempFolderPath, fileName),
           path.join(tempFolderPath, "temp.exe")
         );
-        const compileCommand = spawn("gcc", [
+        compileCommand = spawn("gcc", [
           path.join(tempFolderPath, fileName),
           "-o",
           path.join(tempFolderPath, "temp.exe"),
@@ -51,10 +51,38 @@ const codeExecution = async (req, res) => {
         });
 
         break;
-      // case "java":
-      //   fileName = "temp.java";
-      //   compiledFile = "temp.class";
-      //   break;
+      case "java":
+        fileName = "Main.java";
+        code = generateJavaWrapper(userCode, parameters, returnType, testCases);
+        fs.writeFileSync(path.join(tempFolderPath, fileName), code);
+        console.log("Code write to file");
+        cleanUpFiles.push(
+          path.join(tempFolderPath, fileName),
+          path.join(tempFolderPath, "Main.class"),
+          path.join(tempFolderPath, "Solution.class")
+        );
+        compileCommand = spawn("javac", [path.join(tempFolderPath, fileName)]);
+
+        runCommand = ["java", "-cp", tempFolderPath, "Main"];
+
+        compileCommand.on("close", (code) => {
+          if (code !== 0) {
+            return res
+              .status(500)
+              .json({ status: "fail", message: "Java:Compilation error." });
+          } else {
+            console.log("Compiled successfully");
+            executeCode(
+              runCommand[0],
+              testCases,
+              cleanUpFiles,
+              res,
+              runCommand.slice(1)
+            );
+          }
+        });
+        break;
+
       case "python":
         fileName = "temp.py";
         fs.writeFileSync(path.join(tempFolderPath, fileName), code);
@@ -181,10 +209,8 @@ function generateCWrapper(userCode, parameters, returnType, testCases) {
     return inputInitializationArray;
   });
 
-  console.log(inputInitialization);
-  console.log(inputInitialization.flat().join(" "));
-
-  // console.log(inputInitialization.join(" ").split(",").join(" "));
+  // console.log(inputInitialization);
+  // console.log(inputInitialization.flat().join(" "));
 
   const testCalls = inputInitialization.map(
     (_, i) =>
@@ -206,6 +232,54 @@ int main() {
 ${inputInitialization.flat().join(" ")}
 ${testCalls.join(" ")}
   return 0;
+}`.trim();
+
+  return wrapper;
+}
+
+// Generate wrapper code for Java language
+function generateJavaWrapper(userCode, parameters, returnType, testCases) {
+  const testCalls = testCases.map((ts) => {
+    const args = parameters.map((p, i) => {
+      if (p.isArray) {
+        const arrayElements = ts.input[i]
+          .map(
+            (el) =>
+              `${
+                p.type === "String"
+                  ? `"${el}"`
+                  : p.type === "char"
+                  ? `'${el}'`
+                  : el
+              }`
+          )
+          .join(",");
+        console.log(arrayElements);
+        return `new ${p.type}[]{${arrayElements}}\n`;
+      } else {
+        return `${
+          p.type === "String"
+            ? `"${ts.input[i]}"`
+            : p.type === "char"
+            ? `'${ts.input[i]}'`
+            : ts.input[i]
+        }\n`;
+      }
+    });
+    console.log(args);
+    // console.log(inputInitializationArray);
+
+    return `System.out.println(new Solution().solution(${args}));`;
+  });
+  console.log(testCalls.join(" \n"));
+
+  const wrapper = `
+${userCode}
+
+public class Main {
+    public static void main(String[] args) {
+        ${testCalls.join(" \n")}
+    }
 }`.trim();
 
   return wrapper;
