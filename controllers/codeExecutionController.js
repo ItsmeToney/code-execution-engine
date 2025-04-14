@@ -5,7 +5,7 @@ const { spawn } = require("child_process");
 
 const codeExecution = async (req, res) => {
   try {
-    const { code, language, testCases } = req.body;
+    const { userCode, language, testCases, parameters, returnType } = req.body;
     console.log(testCases);
 
     const tempFolderPath = path.join(__dirname, "temp");
@@ -14,6 +14,10 @@ const codeExecution = async (req, res) => {
       fs.mkdirSync(tempFolderPath);
     }
 
+    //creating a complete code from solution function that we get from the user
+
+    let code;
+
     let fileName,
       compiledFile,
       runCommand,
@@ -21,7 +25,9 @@ const codeExecution = async (req, res) => {
     switch (language.toLowerCase()) {
       case "c":
         fileName = "temp.c";
+        code = generateCWrapper(userCode, parameters, returnType, testCases);
         fs.writeFileSync(path.join(tempFolderPath, fileName), code);
+        console.log("Code write to file");
         cleanUpFiles.push(
           path.join(tempFolderPath, fileName),
           path.join(tempFolderPath, "temp.exe")
@@ -115,6 +121,94 @@ function executeCode(command, testCases, cleanUpFiles, res, args = []) {
         .json({ status: "fail", message: `${errorOutput}` });
     }
   });
+}
+
+//generating wrapper code for C language
+
+function generateCWrapper(userCode, parameters, returnType, testCases) {
+  let fs; //format specifier
+
+  switch (returnType) {
+    case "int":
+      fs = "%d";
+      break;
+    case "float":
+      fs = "%f";
+      break;
+    case "char":
+      fs = "%c";
+      break;
+    case "char*":
+      fs = "%s";
+      break;
+    case "char[]":
+      fs = "%s";
+      break;
+    default:
+      throw new Error("Unsupported return type");
+  }
+
+  const inputInitialization = testCases.map((ts, tsi) => {
+    // console.log(ts.input);
+    const inputInitializationArray = parameters.map((p, i) => {
+      if (p.isArray) {
+        const arrayElements = ts.input[i]
+          .map(
+            (el) =>
+              `${
+                p.type === "char*"
+                  ? `"${el}"`
+                  : p.type === "char"
+                  ? `'${el}'`
+                  : el
+              }`
+          )
+          .join();
+        console.log(arrayElements);
+        return `${p.type} ${p.name}${tsi}[]={${arrayElements}};\n`;
+      } else {
+        return `${p.type} ${p.name}${tsi}=${
+          p.type == "char*"
+            ? `"${ts.input[i]}"`
+            : p.type == "char"
+            ? `'${ts.input[i]}'`
+            : ts.input[i]
+        };\n`;
+      }
+    });
+    // console.log(inputInitializationArray);
+
+    return inputInitializationArray;
+  });
+
+  console.log(inputInitialization);
+  console.log(inputInitialization.flat().join(" "));
+
+  // console.log(inputInitialization.join(" ").split(",").join(" "));
+
+  const testCalls = inputInitialization.map(
+    (_, i) =>
+      `printf("${fs}\\n",solution(${parameters.map(
+        (p) => `${p.name}${i}`
+      )}));\n`
+  );
+
+  // console.log(testCalls);
+  // console.log(testCalls.join(" "));
+  const wrapper = `
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+${userCode}
+
+int main() {
+${inputInitialization.flat().join(" ")}
+${testCalls.join(" ")}
+  return 0;
+}`.trim();
+
+  return wrapper;
 }
 
 module.exports = { codeExecution };
