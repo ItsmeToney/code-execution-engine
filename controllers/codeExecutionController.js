@@ -85,6 +85,12 @@ const codeExecution = async (req, res) => {
 
       case "python":
         fileName = "temp.py";
+        code = generatePythonWrapper(
+          userCode,
+          parameters,
+          returnType,
+          testCases
+        );
         fs.writeFileSync(path.join(tempFolderPath, fileName), code);
         runCommand = ["python", [path.join(tempFolderPath, fileName)]];
         cleanUpFiles.push(path.join(tempFolderPath, fileName));
@@ -281,6 +287,26 @@ public class Main {
         ${testCalls.join(" \n")}
     }
 }`.trim();
+
+  return wrapper;
+}
+
+//Generate wrapper code for python language
+function generatePythonWrapper(userCode, parameters, returnType, testCases) {
+  let wrapper = userCode.trim() + "\n\n";
+  wrapper += 'if __name__ == "__main__":\n';
+
+  testCases.forEach((testCase) => {
+    const formattedInputs = testCase.input
+      .map((inp) => {
+        if (typeof inp === "string") return JSON.stringify(inp);
+        if (Array.isArray(inp)) return JSON.stringify(inp);
+        return inp;
+      })
+      .join(", ");
+
+    wrapper += `    print(solution(${formattedInputs}))\n`;
+  });
 
   return wrapper;
 }
