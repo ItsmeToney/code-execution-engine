@@ -1,0 +1,220 @@
+[
+  {
+    "title": "Check Anagram",
+    "description": "Return true if the two strings are anagrams of each other.",
+    "language": "python",
+    "testCases": [
+      { "input": ["listen", "silent"], "expectedOutput": true },
+      { "input": ["triangle", "integral"], "expectedOutput": true },
+      { "input": ["apple", "papel"], "expectedOutput": true },
+      { "input": ["rat", "car"], "expectedOutput": false },
+      { "input": ["night", "thing"], "expectedOutput": true },
+      { "input": ["abcd", "dcbae"], "expectedOutput": false }
+    ]
+  },
+  {
+    "title": "Find Missing Number",
+    "description": "Find the missing number in an array containing numbers from 1 to n.",
+    "language": "java",
+    "parameters": [{ "name": "arr", "type": "int", "isArray": true }],
+    "testCases": [
+      { "input": [[1, 2, 4, 5]], "expectedOutput": 3 },
+      { "input": [[2, 3, 1, 5]], "expectedOutput": 4 },
+      { "input": [[1, 3]], "expectedOutput": 2 },
+      { "input": [[1, 2]], "expectedOutput": 3 },
+      { "input": [[2]], "expectedOutput": 1 }
+    ]
+  },
+  {
+    "title": "Merge Two Sorted Arrays",
+    "description": "Merge two sorted arrays and return a single sorted array.",
+    "language": "python",
+    "testCases": [
+      {
+        "input": [
+          [1, 3, 5],
+          [2, 4, 6]
+        ],
+        "expectedOutput": [1, 2, 3, 4, 5, 6]
+      },
+      { "input": [[1], [2]], "expectedOutput": [1, 2] },
+      { "input": [[], [1, 2, 3]], "expectedOutput": [1, 2, 3] },
+      {
+        "input": [
+          [5, 10],
+          [2, 12]
+        ],
+        "expectedOutput": [2, 5, 10, 12]
+      },
+      { "input": [[], []], "expectedOutput": [] }
+    ]
+  },
+  {
+    "title": "Greatest Common Divisor",
+    "description": "Return the greatest common divisor (GCD) of two numbers.",
+    "language": "c",
+    "parameters": [
+      { "name": "a", "type": "int", "isArray": false },
+      { "name": "b", "type": "int", "isArray": false }
+    ],
+    "returnType": "int",
+    "testCases": [
+      { "input": [10, 15], "expectedOutput": 5 },
+      { "input": [21, 14], "expectedOutput": 7 },
+      { "input": [17, 13], "expectedOutput": 1 },
+      { "input": [100, 25], "expectedOutput": 25 },
+      { "input": [81, 27], "expectedOutput": 27 }
+    ]
+  },
+  {
+    "title": "Check Prime Number",
+    "description": "Return true if a number is prime, otherwise false.",
+    "language": "java",
+    "parameters": [{ "name": "n", "type": "int", "isArray": false }],
+    "testCases": [
+      { "input": [2], "expectedOutput": true },
+      { "input": [3], "expectedOutput": true },
+      { "input": [4], "expectedOutput": false },
+      { "input": [17], "expectedOutput": true },
+      { "input": [1], "expectedOutput": false },
+      { "input": [0], "expectedOutput": false }
+    ]
+  },
+  {
+    "title": "Sum of Array Elements",
+    "description": "Return the sum of all elements in the array.",
+    "language": "c",
+    "parameters": [
+      { "name": "arr", "type": "int", "isArray": true },
+      { "name": "size", "type": "int", "isArray": false }
+    ],
+    "returnType": "int",
+    "testCases": [
+      { "input": [[1, 2, 3], 3], "expectedOutput": 6 },
+      { "input": [[0, 0, 0], 3], "expectedOutput": 0 },
+      { "input": [[10, -5, 5], 3], "expectedOutput": 10 },
+      { "input": [[100], 1], "expectedOutput": 100 },
+      { "input": [[5, 5, 5, 5], 4], "expectedOutput": 20 }
+    ]
+  },
+  {
+    "title": "Square a Number",
+    "description": "Return the square of the given number.",
+    "language": "python",
+    "testCases": [
+      { "input": [2], "expectedOutput": 4 },
+      { "input": [5], "expectedOutput": 25 },
+      { "input": [-3], "expectedOutput": 9 },
+      { "input": [0], "expectedOutput": 0 },
+      { "input": [10], "expectedOutput": 100 }
+    ]
+  },
+  {
+    "title": "Count Vowels",
+    "description": "Return the number of vowels in a string.",
+    "language": "java",
+    "parameters": [{ "name": "str", "type": "String", "isArray": false }],
+    "testCases": [
+      { "input": ["hello"], "expectedOutput": 2 },
+      { "input": ["world"], "expectedOutput": 1 },
+      { "input": ["aeiou"], "expectedOutput": 5 },
+      { "input": ["bcdfg"], "expectedOutput": 0 },
+      { "input": ["HELLO"], "expectedOutput": 2 }
+    ]
+  },
+  {
+    "title": "Is Even",
+    "description": "Return true if a number is even.",
+    "language": "c",
+    "parameters": [{ "name": "num", "type": "int", "isArray": false }],
+    "returnType": "int",
+    "testCases": [
+      { "input": [2], "expectedOutput": 1 },
+      { "input": [3], "expectedOutput": 0 },
+      { "input": [0], "expectedOutput": 1 },
+      { "input": [-2], "expectedOutput": 1 },
+      { "input": [-3], "expectedOutput": 0 }
+    ]
+  },
+  {
+    "title": "Nth Fibonacci Number",
+    "description": "Return the Nth Fibonacci number (0-indexed).",
+    "language": "python",
+    "testCases": [
+      { "input": [0], "expectedOutput": 0 },
+      { "input": [1], "expectedOutput": 1 },
+      { "input": [5], "expectedOutput": 5 },
+      { "input": [10], "expectedOutput": 55 },
+      { "input": [7], "expectedOutput": 13 }
+    ]
+  },
+  {
+    "title": "Find Maximum",
+    "description": "Return the largest number in the array.",
+    "language": "java",
+    "parameters": [{ "name": "arr", "type": "int", "isArray": true }],
+    "testCases": [
+      { "input": [[1, 2, 3]], "expectedOutput": 3 },
+      { "input": [[-10, -20, -5]], "expectedOutput": -5 },
+      { "input": [[0]], "expectedOutput": 0 },
+      { "input": [[100, 200, 150]], "expectedOutput": 200 },
+      { "input": [[5, 5, 5]], "expectedOutput": 5 }
+    ]
+  },
+  {
+    "title": "Factorial",
+    "description": "Return the factorial of a number.",
+    "language": "c",
+    "parameters": [{ "name": "n", "type": "int", "isArray": false }],
+    "returnType": "int",
+    "testCases": [
+      { "input": [0], "expectedOutput": 1 },
+      { "input": [1], "expectedOutput": 1 },
+      { "input": [5], "expectedOutput": 120 },
+      { "input": [3], "expectedOutput": 6 },
+      { "input": [6], "expectedOutput": 720 }
+    ]
+  },
+  {
+    "title": "Reverse Array",
+    "description": "Return a reversed version of the array.",
+    "language": "python",
+    "testCases": [
+      { "input": [[1, 2, 3]], "expectedOutput": [3, 2, 1] },
+      { "input": [[10, 20]], "expectedOutput": [20, 10] },
+      { "input": [[]], "expectedOutput": [] },
+      { "input": [[5]], "expectedOutput": [5] },
+      { "input": [[1, 2, 3, 4, 5]], "expectedOutput": [5, 4, 3, 2, 1] }
+    ]
+  },
+  {
+    "title": "Check Palindrome",
+    "description": "Return true if the input string is a palindrome.",
+    "language": "java",
+    "parameters": [{ "name": "str", "type": "String", "isArray": false }],
+    "testCases": [
+      { "input": ["madam"], "expectedOutput": true },
+      { "input": ["racecar"], "expectedOutput": true },
+      { "input": ["hello"], "expectedOutput": false },
+      { "input": ["a"], "expectedOutput": true },
+      { "input": ["ab"], "expectedOutput": false }
+    ]
+  },
+  {
+    "title": "Add Two Numbers",
+    "description": "Return the sum of two integers.",
+    "language": "c",
+    "parameters": [
+      { "name": "a", "type": "int", "isArray": false },
+      { "name": "b", "type": "int", "isArray": false }
+    ],
+    "returnType": "int",
+    "testCases": [
+      { "input": [1, 2], "expectedOutput": 3 },
+      { "input": [-1, 5], "expectedOutput": 4 },
+      { "input": [0, 0], "expectedOutput": 0 },
+      { "input": [100, 200], "expectedOutput": 300 },
+      { "input": [-10, -20], "expectedOutput": -30 }
+    ]
+  }
+]
