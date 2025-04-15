@@ -14,6 +14,8 @@ const questions = JSON.parse(
 const import_data = async () => {
   try {
     await Question.create(questions);
+    // const results = await Question.find();
+    // console.log(results);
   } catch (err) {
     console.log(err);
   }
