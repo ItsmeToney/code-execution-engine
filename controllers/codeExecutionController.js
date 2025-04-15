@@ -1,6 +1,16 @@
 const fs = require("fs");
 const path = require("path");
 
+const {
+  generateCWrapper,
+} = require("../utils/wrapperGenerators/generateCWrapper");
+const {
+  generateJavaWrapper,
+} = require("../utils/wrapperGenerators/generateJavaWrapper");
+const {
+  generatePythonWrapper,
+} = require("../utils/wrapperGenerators/generatePythonWrapper");
+
 const { spawn } = require("child_process");
 
 const codeExecution = async (req, res) => {
@@ -159,156 +169,8 @@ function executeCode(command, testCases, cleanUpFiles, res, args = []) {
 
 //generating wrapper code for C language
 
-function generateCWrapper(userCode, parameters, returnType, testCases) {
-  let fs; //format specifier
-
-  switch (returnType) {
-    case "int":
-      fs = "%d";
-      break;
-    case "float":
-      fs = "%f";
-      break;
-    case "char":
-      fs = "%c";
-      break;
-    case "char*":
-      fs = "%s";
-      break;
-    case "char[]":
-      fs = "%s";
-      break;
-    default:
-      throw new Error("Unsupported return type");
-  }
-
-  const inputInitialization = testCases.map((ts, tsi) => {
-    // console.log(ts.input);
-    const inputInitializationArray = parameters.map((p, i) => {
-      if (p.isArray) {
-        const arrayElements = ts.input[i]
-          .map(
-            (el) =>
-              `${
-                p.type === "char*"
-                  ? `"${el}"`
-                  : p.type === "char"
-                  ? `'${el}'`
-                  : el
-              }`
-          )
-          .join();
-        console.log(arrayElements);
-        return `${p.type} ${p.name}${tsi}[]={${arrayElements}};\n`;
-      } else {
-        return `${p.type} ${p.name}${tsi}=${
-          p.type == "char*"
-            ? `"${ts.input[i]}"`
-            : p.type == "char"
-            ? `'${ts.input[i]}'`
-            : ts.input[i]
-        };\n`;
-      }
-    });
-    // console.log(inputInitializationArray);
-
-    return inputInitializationArray;
-  });
-
-  // console.log(inputInitialization);
-  // console.log(inputInitialization.flat().join(" "));
-
-  const testCalls = inputInitialization.map(
-    (_, i) =>
-      `printf("${fs}\\n",solution(${parameters.map(
-        (p) => `${p.name}${i}`
-      )}));\n`
-  );
-
-  // console.log(testCalls);
-  // console.log(testCalls.join(" "));
-  const wrapper = `
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-
-${userCode}
-
-int main() {
-${inputInitialization.flat().join(" ")}
-${testCalls.join(" ")}
-  return 0;
-}`.trim();
-
-  return wrapper;
-}
-
 // Generate wrapper code for Java language
-function generateJavaWrapper(userCode, parameters, returnType, testCases) {
-  const testCalls = testCases.map((ts) => {
-    const args = parameters.map((p, i) => {
-      if (p.isArray) {
-        const arrayElements = ts.input[i]
-          .map(
-            (el) =>
-              `${
-                p.type === "String"
-                  ? `"${el}"`
-                  : p.type === "char"
-                  ? `'${el}'`
-                  : el
-              }`
-          )
-          .join(",");
-        console.log(arrayElements);
-        return `new ${p.type}[]{${arrayElements}}\n`;
-      } else {
-        return `${
-          p.type === "String"
-            ? `"${ts.input[i]}"`
-            : p.type === "char"
-            ? `'${ts.input[i]}'`
-            : ts.input[i]
-        }\n`;
-      }
-    });
-    console.log(args);
-    // console.log(inputInitializationArray);
-
-    return `System.out.println(new Solution().solution(${args}));`;
-  });
-  console.log(testCalls.join(" \n"));
-
-  const wrapper = `
-${userCode}
-
-public class Main {
-    public static void main(String[] args) {
-        ${testCalls.join(" \n")}
-    }
-}`.trim();
-
-  return wrapper;
-}
 
 //Generate wrapper code for python language
-function generatePythonWrapper(userCode, parameters, returnType, testCases) {
-  let wrapper = userCode.trim() + "\n\n";
-  wrapper += 'if __name__ == "__main__":\n';
-
-  testCases.forEach((testCase) => {
-    const formattedInputs = testCase.input
-      .map((inp) => {
-        if (typeof inp === "string") return JSON.stringify(inp);
-        if (Array.isArray(inp)) return JSON.stringify(inp);
-        return inp;
-      })
-      .join(", ");
-
-    wrapper += `    print(solution(${formattedInputs}))\n`;
-  });
-
-  return wrapper;
-}
 
 module.exports = { codeExecution };
