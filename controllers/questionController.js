@@ -2,10 +2,10 @@ const Question = require("../model/questionModel");
 
 const getAllQuestions = async (req, res) => {
   try {
-    const query = Question.find();
-    const fields = "title description language testCases functionDeclaration";
-    const questions = await query.select(fields);
-    // const questions = await Question.find();
+    // const query = Question.find();
+    // const fields = "title description language testCases functionDeclaration";
+    // const questions = await query.select(fields);
+    const questions = await Question.find();
 
     res
       .status(200)
@@ -19,8 +19,18 @@ const getAllQuestions = async (req, res) => {
 const getQuestion = async (req, res) => {
   try {
     const questionId = req.params.id;
+    const { language } = req.query;
     const query = Question.findById({ _id: questionId });
-    const fields = "title description language testCases";
+    let fields;
+    if (language === "c") {
+      fields = "title description language testCases parameters returnType";
+    } else if (language === "java") {
+      fields = "title description language testCases parameters";
+    } else if (language === "python") {
+      fields = "title description language testCases";
+    } else {
+      fields = "title description language testCases";
+    }
     const question = await query.select(fields);
     res.status(200).json({ status: "success", data: question });
   } catch (err) {
