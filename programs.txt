@@ -1,0 +1,128 @@
+0)anagrams
+  return sorted(str1) == sorted(str2)
+
+
+1) gcd
+
+    while (b != 0) {
+        int temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+
+2)prime number
+ if (n <= 1) return false;
+        if (n == 2) return true;
+        if (n % 2 == 0) return false;
+        
+        for (int i = 3; i <= Math.sqrt(n); i += 2) {
+            if (n % i == 0) return false;
+        }
+        return true;
+
+
+
+
+3)sumof array elements
+int sum = 0;
+    for (int i = 0; i < size; i++) {
+        sum += arr[i];
+    }
+    return sum;
+
+
+
+4) square of a number
+
+5) missing number
+  int n = arr.length + 1; // Since one number is missing
+        int expectedSum = n * (n + 1) / 2;
+        int actualSum = 0;
+        
+        for (int num : arr) {
+            actualSum += num;
+        }
+        
+        return expectedSum - actualSum;
+
+6) merge 2 sorted arrays
+merged = []
+    i = j = 0
+
+    # Merge elements until one list is exhausted
+    while i < len(arr1) and j < len(arr2):
+        if arr1[i] < arr2[j]:
+            merged.append(arr1[i])
+            i += 1
+        else:
+            merged.append(arr2[j])
+            j += 1
+
+    # Add remaining elements (if any)
+    while i < len(arr1):
+        merged.append(arr1[i])
+        i += 1
+
+    while j < len(arr2):
+        merged.append(arr2[j])
+        j += 1
+
+    return merged
+
+7)fibonacci
+if n == 0:
+        return 0
+    elif n == 1:
+        return 1
+
+    a, b = 0, 1
+    for _ in range(2, n + 1):
+        a, b = b, a + b
+    return b
+8) maximum in java
+int max = arr[0];
+        for (int num : arr) {
+            if (num > max) {
+                max = num;
+            }
+        }
+        return max;
+
+9)factorial
+if (n == 0 || n == 1)
+        return 1;
+
+    int result = 1;
+    for (int i = 2; i <= n; i++) {
+        result *= i;
+    }
+
+    return result;
+
+10)reverse array in python
+11)add 2 numbers in c
+12)palindrome
+int left = 0, right = str.length() - 1;
+        while (left < right) {
+            if (str.charAt(left) != str.charAt(right)) {
+                return false;
+            }
+            left++;
+            right--;
+        }
+        return true;
+
+13)count vowels
+ int count = 0;
+        String lower = str.toLowerCase();
+        for (int i = 0; i < lower.length(); i++) {
+            char ch = lower.charAt(i);
+            if (ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u') {
+                count++;
+            }
+        }
+        return count;
+
+14)is even
+return num % 2 == 0 ? 1 : 0;
