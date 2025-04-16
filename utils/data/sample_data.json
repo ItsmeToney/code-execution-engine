@@ -5,12 +5,12 @@
     "language": "python",
     "functionDeclaration": "def solution(str1: str, str2: str) -> bool:\n    pass  # implementation goes here",
     "testCases": [
-      { "input": ["listen", "silent"], "expectedOutput": true },
-      { "input": ["triangle", "integral"], "expectedOutput": true },
-      { "input": ["apple", "papel"], "expectedOutput": true },
-      { "input": ["rat", "car"], "expectedOutput": false },
-      { "input": ["night", "thing"], "expectedOutput": true },
-      { "input": ["abcd", "dcbae"], "expectedOutput": false }
+      { "input": ["listen", "silent"], "expectedOutput": "True" },
+      { "input": ["triangle", "integral"], "expectedOutput": "True" },
+      { "input": ["apple", "papel"], "expectedOutput": "True" },
+      { "input": ["rat", "car"], "expectedOutput": "False" },
+      { "input": ["night", "thing"], "expectedOutput": "True" },
+      { "input": ["abcd", "dcbae"], "expectedOutput": "False" }
     ]
   },
   {
@@ -75,7 +75,7 @@
     "description": "Return true if a number is prime, otherwise false.",
     "language": "java",
 
-    "functionDeclaration": "public class Solution {\n    public static boolean solution(int n) {\n        // implementation goes here\n    }\n}",
+    "functionDeclaration": "class Solution {\n    public static boolean solution(int n) {\n        // implementation goes here\n    }\n}",
     "parameters": [{ "name": "n", "type": "int", "isArray": false }],
     "testCases": [
       { "input": [2], "expectedOutput": true },
@@ -121,7 +121,7 @@
     "title": "Count Vowels",
     "description": "Return the number of vowels in a string.",
     "language": "java",
-    "functionDeclaration": "public class Solution {\n    public static int solution(String str) {\n        // implementation goes here\n    }\n}",
+    "functionDeclaration": "class Solution {\n    public static int solution(String str) {\n        // implementation goes here\n    }\n}",
     "parameters": [{ "name": "str", "type": "String", "isArray": false }],
     "testCases": [
       { "input": ["hello"], "expectedOutput": 2 },
