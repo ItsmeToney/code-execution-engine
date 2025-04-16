@@ -16,6 +16,7 @@ const { spawn } = require("child_process");
 const codeExecution = async (req, res) => {
   try {
     const { userCode, language, testCases, parameters, returnType } = req.body;
+    console.log(req.body);
     console.log(testCases);
 
     const tempFolderPath = path.join(__dirname, "temp");
@@ -36,6 +37,7 @@ const codeExecution = async (req, res) => {
       case "c":
         fileName = "temp.c";
         code = generateCWrapper(userCode, parameters, returnType, testCases);
+        console.log(code);
         fs.writeFileSync(path.join(tempFolderPath, fileName), code);
         console.log("Code write to file");
         cleanUpFiles.push(
@@ -120,7 +122,7 @@ const codeExecution = async (req, res) => {
 
     // filePath = filePath.replace("C:\\", "/mnt/c/").replaceAll("\\", "/");
   } catch (err) {
-    res.status(400).json({ status: "fail", message: err.message });
+    res.status(400).json({ status: "fail", message: err });
   }
 };
 
@@ -147,13 +149,21 @@ function executeCode(command, testCases, cleanUpFiles, res, args = []) {
       console.log(outputArr);
 
       const result = testCases.map((testCase, index) => {
+        let expOut;
+        if (Array.isArray(testCase.expectedOutput)) {
+          expOut = `[${testCase.expectedOutput.join(", ")}]`;
+        } else {
+          expOut = testCase.expectedOutput.toString();
+        }
+        console.log(expOut);
+
         return {
           input: testCase.input,
-          expectedOutput: testCase.expectedOutput,
+          // expectedOutput: testCase.expectedOutput.join(", "),
+          expectedOutput: expOut,
           output: outputArr[index],
           status:
-            testCase.expectedOutput.toString().trim() ===
-            outputArr[index].toString().trim(),
+            expOut.toString().trim() === outputArr[index].toString().trim(),
         };
       });
       console.log(result);
