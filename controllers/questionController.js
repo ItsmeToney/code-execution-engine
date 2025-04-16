@@ -5,7 +5,8 @@ const getAllQuestions = async (req, res) => {
     // const query = Question.find();
     // const fields = "title description language testCases functionDeclaration";
     // const questions = await query.select(fields);
-    const questions = await Question.find();
+    const { language } = req.query;
+    const questions = await Question.find({ language });
 
     res
       .status(200)
