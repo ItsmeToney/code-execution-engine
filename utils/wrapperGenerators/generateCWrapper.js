@@ -44,7 +44,7 @@ function generateCWrapper(userCode, parameters, returnType, testCases) {
               }`
           )
           .join();
-        console.log(arrayElements);
+        // console.log(arrayElements);
         return `${p.type} ${p.name}${tsi}[]={${arrayElements}};\n`;
       } else {
         return `${p.type} ${p.name}${tsi}=${

@@ -14,7 +14,7 @@ function generateJavaWrapper(userCode, parameters, returnType, testCases) {
               }`
           )
           .join(",");
-        console.log(arrayElements);
+        // console.log(arrayElements);
         return `new ${p.type}[]{${arrayElements}}\n`;
       } else {
         return `${
@@ -26,12 +26,12 @@ function generateJavaWrapper(userCode, parameters, returnType, testCases) {
         }\n`;
       }
     });
-    console.log(args);
+    // console.log(args);
     // console.log(inputInitializationArray);
 
     return `System.out.println(new Solution().solution(${args}));`;
   });
-  console.log(testCalls.join(" \n"));
+  // console.log(testCalls.join(" \n"));
 
   const wrapper = `
   ${userCode}
