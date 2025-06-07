@@ -19,7 +19,7 @@ const codeExecution = async (req, res) => {
     console.log(req.body);
     console.log(testCases);
 
-    const tempFolderPath = path.join(__dirname, "temp");
+    const tempFolderPath = path.join(__dirname, "temp", Date.now().toString());
 
     if (!fs.existsSync(tempFolderPath)) {
       fs.mkdirSync(tempFolderPath);
@@ -58,7 +58,7 @@ const codeExecution = async (req, res) => {
               .json({ status: "fail", message: "C:Compilation error." });
           } else {
             console.log("Compiled successfully");
-            executeCode(runCommand[0], testCases, cleanUpFiles, res);
+            executeCode(runCommand[0], testCases, tempFolderPath, res);
           }
         });
 
@@ -87,7 +87,7 @@ const codeExecution = async (req, res) => {
             executeCode(
               runCommand[0],
               testCases,
-              cleanUpFiles,
+              tempFolderPath,
               res,
               runCommand.slice(1)
             );
@@ -106,7 +106,7 @@ const codeExecution = async (req, res) => {
         fs.writeFileSync(path.join(tempFolderPath, fileName), code);
         runCommand = ["python", [path.join(tempFolderPath, fileName)]];
         cleanUpFiles.push(path.join(tempFolderPath, fileName));
-        executeCode(runCommand[0], testCases, cleanUpFiles, res, [
+        executeCode(runCommand[0], testCases, tempFolderPath, res, [
           runCommand[1],
         ]);
         break;
@@ -126,7 +126,7 @@ const codeExecution = async (req, res) => {
   }
 };
 
-function executeCode(command, testCases, cleanUpFiles, res, args = []) {
+function executeCode(command, testCases, tempFolderPath, res, args = []) {
   let output = "";
   let errorOutput = "";
   const child = spawn(command, args || []);
@@ -138,12 +138,22 @@ function executeCode(command, testCases, cleanUpFiles, res, args = []) {
     errorOutput += data.toString();
   });
 
-  child.on("close", (code) => {
-    cleanUpFiles.map((cleanFile) => {
-      fs.unlinkSync(cleanFile);
+  child.on("exit", (code, signal) => {
+    //removing temp folder and its contents
+    fs.rm(tempFolderPath, { recursive: true, force: true }, (err) => {
+      if (err) console.log("Error removing the temp folder: ", err);
+      else console.log("Temp folder removed successfully");
     });
-    // console.log("File removed successfully");
 
+    console.log("signal", signal);
+    console.log("code", code);
+    if (signal) {
+      return res.status(500).json({
+        status: "fail",
+        message: `Runtime Error: Process terminated due to signal ${signal}`,
+        stderr: `${errorOutput}`,
+      });
+    }
     if (code === 0) {
       let outputArr = output.split("\r\n").filter((out) => out.length > 0);
       console.log(outputArr);
@@ -159,7 +169,6 @@ function executeCode(command, testCases, cleanUpFiles, res, args = []) {
 
         return {
           input: testCase.input,
-          // expectedOutput: testCase.expectedOutput.join(", "),
           expectedOutput: expOut,
           output: outputArr[index],
           status:
@@ -172,7 +181,7 @@ function executeCode(command, testCases, cleanUpFiles, res, args = []) {
     } else {
       return res
         .status(500)
-        .json({ status: "fail", message: `${errorOutput}` });
+        .json({ status: "fail", message: `Error: ${errorOutput}` });
     }
   });
 }

@@ -3,19 +3,26 @@ function generateCWrapper(userCode, parameters, returnType, testCases) {
 
   switch (returnType) {
     case "int":
+    case "bool":
       fs = "%d";
       break;
     case "float":
+    case "double":
       fs = "%f";
       break;
     case "char":
       fs = "%c";
       break;
     case "char*":
-      fs = "%s";
-      break;
     case "char[]":
       fs = "%s";
+      break;
+    case "int*":
+    case "float*":
+      fs = "%p";
+      break;
+    case "void":
+      fs = null;
       break;
     default:
       throw new Error("Unsupported return type");
@@ -23,7 +30,7 @@ function generateCWrapper(userCode, parameters, returnType, testCases) {
 
   const inputInitialization = testCases.map((ts, tsi) => {
     // console.log(ts.input);
-    const inputInitializationArray = parameters.map((p, i) => {
+    return parameters.map((p, i) => {
       if (p.isArray) {
         const arrayElements = ts.input[i]
           .map(
@@ -49,20 +56,20 @@ function generateCWrapper(userCode, parameters, returnType, testCases) {
         };\n`;
       }
     });
-    // console.log(inputInitializationArray);
-
-    return inputInitializationArray;
   });
 
   // console.log(inputInitialization);
   // console.log(inputInitialization.flat().join(" "));
 
-  const testCalls = inputInitialization.map(
-    (_, i) =>
-      `printf("${fs}\\n",solution(${parameters.map(
-        (p) => `${p.name}${i}`
-      )}));\n`
-  );
+  const testCalls = inputInitialization.map((_, i) => {
+    const args = parameters.map((p) => `${p.name}${i}`).join(", ");
+
+    if (returnType === "void") {
+      return `solution(${args});\n`;
+    } else {
+      return `printf("${fs}\\n",solution(${args}));\n`;
+    }
+  });
 
   // console.log(testCalls);
   // console.log(testCalls.join(" "));
