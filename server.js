@@ -2,15 +2,32 @@ const express = require("express");
 require("dotenv").config();
 const cors = require("cors");
 
-const connectDB = require("./config/connectDB.js");
-connectDB();
+const os = require("os");
+const cluster = require("cluster");
 
-const app = express();
-app.use(cors());
-app.use(express.json());
-const port = process.env.PORT || 4000;
+const numCpus = os.cpus().length;
 
-app.use("/api/submit", require("./routes/codeExecutionRoute.js"));
-app.use("/api/questions", require("./routes/questionsRoute.js"));
+if (cluster.isPrimary) {
+  for (let i = 0; i < numCpus; i++) {
+    cluster.fork();
+  }
+  cluster.on("exit", (worker, code, signal) => {
+    console.log(
+      `Worker: ${worker.process.pid} dies. Spawning a new process...`
+    );
+    cluster.fork();
+  });
+} else {
+  const connectDB = require("./config/connectDB.js");
+  connectDB();
 
-app.listen(port, () => console.log(`Server is running on port ${port}`));
+  const app = express();
+  app.use(cors());
+  app.use(express.json());
+  const port = process.env.PORT || 4000;
+
+  app.use("/api/submit", require("./routes/codeExecutionRoute.js"));
+  app.use("/api/questions", require("./routes/questionsRoute.js"));
+
+  app.listen(port, () => console.log(`Server is running on port ${port}`));
+}

@@ -6,7 +6,7 @@ const executeCodeInWorker = require("../services/codeExecutor");
 const worker = new Worker(
   "code-execution",
   async (job) => await executeCodeInWorker(job.data),
-  { connection: redis }
+  { connection: redis, concurrency: 1 }
 );
 
 worker.on("completed", (job) => {

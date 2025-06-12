@@ -11,6 +11,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "artillery": "^2.0.21",
     "bullmq": "^5.53.2",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",

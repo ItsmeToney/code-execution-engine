@@ -15,6 +15,7 @@ const submitCodeForExecution = async (req, res) => {
     });
 
     const result = await job.waitUntilFinished(codeExecutionEvents);
+    // console.log(result);
 
     return res.status(200).json({ result });
     // res.status(202).json({ message: "Job added to queue", jobId: job.id });
